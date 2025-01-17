@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Controlla se lo script è eseguito come root, altrimenti fallisce con un messaggio.
+if [ "$EUID" -ne 0 ]; then 
+  echo "Please run as root or use sudo to execute this script."
+  exit 1
+fi
+
 # Funzione per chiedere e confermare la password
 ask_password() {
   while true; do
@@ -18,11 +24,11 @@ ask_password() {
 
 # Aggiornamento dei pacchetti e installazione di Docker
 echo "Updating package lists and installing Docker and Docker Compose..."
-sudo apt-get update
-sudo apt-get install -y docker-ce docker-ce-cli containerd.io
-sudo apt-get install -y docker-compose-plugin
+apt-get update
+apt-get install -y docker-ce docker-ce-cli containerd.io
+apt-get install -y docker-compose-plugin
 
-# Chiedi e conferma la password
+# Chiede e conferma la password
 ask_password
 
 # Verifica se il file .env esiste
