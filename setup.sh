@@ -55,6 +55,10 @@ if ! command -v docker-compose &> /dev/null; then
   exit 1
 fi
 
+# Costruisci le immagini Docker usando Docker Compose
+echo "Building Docker images with Docker Compose..."
+docker-compose build
+
 # Avvia Docker Compose
 echo "Starting Docker Compose..."
 docker-compose up -d
