@@ -22,6 +22,12 @@ ask_password() {
   done
 }
 
+# Funzione per chiedere la chiave API di Tailscale
+ask_tailscale_api_key() {
+  read -s -p "Enter your Tailscale API key: " tailscale_api_key
+  echo
+}
+
 # Aggiornamento dei pacchetti e installazione di Docker
 echo "Updating package lists and installing Docker and Docker Compose..."
 apt-get update
@@ -35,17 +41,38 @@ else
   DOCKER_COMPOSE_CMD="docker compose"
 fi
 
-# Chiede e conferma la password
-ask_password
-
 # Verifica se il file .env esiste
 if [ -f .env ]; then
-  echo ".env file already exists. Please make sure it contains the correct configurations."
+  while true; do
+    read -p ".env file already exists. Do you want to keep it? (y/n): " yn
+    case $yn in
+        [Yy]* ) 
+          source .env
+          echo "Using existing .env file."
+          use_existing_env=true
+          break;;
+        [Nn]* ) 
+          echo "Removing existing .env file..."
+          rm .env
+          use_existing_env=false
+          break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+  done
 else
+  use_existing_env=false
+fi
+
+# Se non si utilizza il file .env esistente, chiedere password e chiave API
+if [ "$use_existing_env" = false ]; then
+  ask_password
+  ask_tailscale_api_key
+
   # Crea un file .env e aggiungi le variabili d'ambiente
   echo "Creating .env file..."
   cat <<EOL > .env
 SA_PASSWORD=$password1
+TAILSCALE_API_KEY=$tailscale_api_key
 EOL
   echo ".env file created with user-defined values."
 fi
