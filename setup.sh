@@ -28,6 +28,11 @@ ask_tailscale_api_key() {
   echo
 }
 
+# Funzione per chiedere il nome del container Tailscale
+ask_tailscale_container_name() {
+  read -p "Enter the name for the Tailscale container: " tailscale_container_name
+}
+
 # Aggiornamento dei pacchetti e installazione di Docker
 echo "Updating package lists and installing Docker and Docker Compose..."
 apt-get update
@@ -63,18 +68,23 @@ else
   use_existing_env=false
 fi
 
-# Se non si utilizza il file .env esistente, chiedere password e chiave API
+# Se non si utilizza il file .env esistente, chiedere password, chiave API e nome del container
 if [ "$use_existing_env" = false ]; then
   ask_password
   ask_tailscale_api_key
+  ask_tailscale_container_name
 
   # Crea un file .env e aggiungi le variabili d'ambiente
   echo "Creating .env file..."
   cat <<EOL > .env
 SA_PASSWORD=$password1
 TAILSCALE_API_KEY=$tailscale_api_key
+TAILSCALE_CONTAINER_NAME=$tailscale_container_name
 EOL
   echo ".env file created with user-defined values."
+else
+  # Se esiste un file .env, chiedere solo il nome del container
+  ask_tailscale_container_name
 fi
 
 # Verifica se Docker è installato
