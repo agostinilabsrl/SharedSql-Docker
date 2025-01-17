@@ -28,6 +28,13 @@ apt-get update
 apt-get install -y docker-ce docker-ce-cli containerd.io
 apt-get install -y docker-compose-plugin
 
+# Determina se usare "docker-compose" o "docker compose"
+if command -v docker-compose &> /dev/null; then
+  DOCKER_COMPOSE_CMD="docker-compose"
+else
+  DOCKER_COMPOSE_CMD="docker compose"
+fi
+
 # Chiede e conferma la password
 ask_password
 
@@ -50,17 +57,17 @@ if ! command -v docker &> /dev/null; then
 fi
 
 # Verifica se Docker Compose è installato
-if ! command -v docker-compose &> /dev/null; then
+if ! command -v ${DOCKER_COMPOSE_CMD} &> /dev/null; then
   echo "Docker Compose is not installed. Please install Docker Compose first."
   exit 1
 fi
 
 # Costruisci le immagini Docker usando Docker Compose
 echo "Building Docker images with Docker Compose..."
-docker-compose build
+${DOCKER_COMPOSE_CMD} build
 
 # Avvia Docker Compose
 echo "Starting Docker Compose..."
-docker-compose up -d
+${DOCKER_COMPOSE_CMD} up -d
 
 echo "Setup and launch complete. Containers are running."
