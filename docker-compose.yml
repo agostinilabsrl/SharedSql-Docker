@@ -13,7 +13,7 @@ services:
 
   tailscale:
     image: tailscale/tailscale
-    container_name: tailscale
+    container_name: ${TAILSCALE_CONTAINER_NAME}
     privileged: true
     networks:
       - mynetwork
