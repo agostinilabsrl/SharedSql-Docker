@@ -17,7 +17,10 @@ services:
     privileged: true
     networks:
       - mynetwork
-    command: tailscaled
+    environment:
+      - TS_AUTH_KEY=${TAILSCALE_API_KEY}tskey-XXXXXXXXXXXXXXXXXXXXXXX # Sostituisci con il tuo Tailscale auth key
+    command: ["tailscaled", "--state=/var/lib/tailscale/tailscaled.state"]
+    restart: unless-stopped    
 
 networks:
   mynetwork:
